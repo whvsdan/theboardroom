@@ -102,10 +102,10 @@ export function Footer() {
         <div className="border-t border-primary-foreground/20 pt-8 flex flex-col md:flex-row justify-between items-center text-sm opacity-90">
           <p>&copy; 2025 Boardroom Summit. All rights reserved.</p>
           <div className="flex gap-6 mt-4 md:mt-0">
-            <Link href="#" className="hover:underline">
+            <Link href="/privacy" className="hover:underline">
               Privacy Policy
             </Link>
-            <Link href="#" className="hover:underline">
+            <Link href="/terms" className="hover:underline">
               Terms of Service
             </Link>
           </div>

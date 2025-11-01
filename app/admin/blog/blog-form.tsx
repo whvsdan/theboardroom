@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { uploadBlogImage } from "@/app/actions/admin"
 import Image from "next/image"
-import { Upload, X } from "lucide-react"
+import { Upload, X, LinkIcon } from "lucide-react"
 
 interface BlogPost {
   id: string
@@ -30,8 +30,10 @@ export default function BlogPostForm({ post, onSuccess }: BlogPostFormProps) {
   const [content, setContent] = useState(post?.content || "")
   const [published, setPublished] = useState(post?.published || false)
   const [featuredImage, setFeaturedImage] = useState<string>(post?.featured_image_url || "")
+  const [imageUrl, setImageUrl] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
+  const [imageInputMode, setImageInputMode] = useState<"upload" | "url">("upload")
   const supabase = createClient()
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -45,11 +47,19 @@ export default function BlogPostForm({ post, onSuccess }: BlogPostFormProps) {
 
       const result = await uploadBlogImage(formData)
       setFeaturedImage(result.url)
+      setImageUrl("")
     } catch (error) {
       console.error("Error uploading image:", error)
       alert("Failed to upload image")
     } finally {
       setIsUploadingImage(false)
+    }
+  }
+
+  function handleAddImageUrl() {
+    if (imageUrl.trim()) {
+      setFeaturedImage(imageUrl)
+      setImageUrl("")
     }
   }
 
@@ -118,19 +128,69 @@ export default function BlogPostForm({ post, onSuccess }: BlogPostFormProps) {
                   </button>
                 </div>
               )}
-              <div className="flex-1">
-                <label className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-lg p-6 cursor-pointer hover:border-accent transition-colors">
-                  <Upload size={24} className="text-muted-foreground mb-2" />
-                  <span className="text-sm font-medium text-muted-foreground">Upload Image</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    disabled={isUploadingImage}
-                    className="hidden"
-                  />
-                </label>
-                {isUploadingImage && <p className="text-sm text-muted-foreground mt-2">Uploading...</p>}
+              <div className="flex-1 space-y-3">
+                <div className="flex gap-2 mb-3">
+                  <button
+                    type="button"
+                    onClick={() => setImageInputMode("upload")}
+                    className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                      imageInputMode === "upload"
+                        ? "bg-accent text-accent-foreground"
+                        : "bg-border text-muted-foreground hover:bg-border"
+                    }`}
+                  >
+                    <Upload size={14} className="inline mr-1" />
+                    Upload
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setImageInputMode("url")}
+                    className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                      imageInputMode === "url"
+                        ? "bg-accent text-accent-foreground"
+                        : "bg-border text-muted-foreground hover:bg-border"
+                    }`}
+                  >
+                    <LinkIcon size={14} className="inline mr-1" />
+                    URL
+                  </button>
+                </div>
+
+                {imageInputMode === "upload" ? (
+                  <>
+                    <label className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-lg p-6 cursor-pointer hover:border-accent transition-colors">
+                      <Upload size={24} className="text-muted-foreground mb-2" />
+                      <span className="text-sm font-medium text-muted-foreground">Upload Image</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={isUploadingImage}
+                        className="hidden"
+                      />
+                    </label>
+                    {isUploadingImage && <p className="text-sm text-muted-foreground">Uploading...</p>}
+                  </>
+                ) : (
+                  <div className="space-y-2">
+                    <input
+                      type="url"
+                      value={imageUrl}
+                      onChange={(e) => setImageUrl(e.target.value)}
+                      placeholder="https://example.com/image.jpg"
+                      className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-sm"
+                    />
+                    <Button
+                      type="button"
+                      onClick={handleAddImageUrl}
+                      disabled={!imageUrl.trim()}
+                      size="sm"
+                      variant="outline"
+                    >
+                      Add Image
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
