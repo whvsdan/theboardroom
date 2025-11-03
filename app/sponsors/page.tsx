@@ -59,12 +59,12 @@ export default function Sponsors() {
     },
     {
       name: "Fun Capitol Night Club",
-      logo: "/sponsors/fun-capitol-logo.png",
+      logo: "/sponsors/fun-capitol-logo.jpg",
       description: "",
     },
     {
       name: "Graacious Esteem Shelters Ltd.",
-      logo: "/sponsors/graacious-esteem-logo.png",
+      logo: "/sponsors/graacious-esteem-logo.jpg",
       description: "Building trust and credibility in real estate",
     },
   ]
